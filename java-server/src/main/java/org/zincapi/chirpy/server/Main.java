@@ -25,9 +25,12 @@ public class Main {
 	}
 	
 	public static void initZinc(Zinc z) {
-		Repository repo = new Repository(z);
-		z.handleResource("topics", new TopicListResourceHandler(z, repo));
-		repo.addTopic("baseball");
-		repo.addTopic("football");
+		try {
+			Repository repo = new Repository(z);
+			z.handleResource("topics", new TopicListResourceHandler(z, repo));
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			System.exit(1);
+		}
 	}
 }

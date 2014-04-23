@@ -6,7 +6,6 @@ require(['zinc'], function(zinc) {
       var currentRequest = null;
       var currentTopic = null;
       function addTopic(topic) {
-        console.log(topic);
         var item = $("<li class='topic'>"+topic+"</li>");
         item.click(function(e) { subscribeTo(topic); });
         $("#topics").append(item);
@@ -28,7 +27,12 @@ require(['zinc'], function(zinc) {
         var topic = msg.topic.name;
       });
       topics.send();
-      
+
+      $('#createtopic').click(function(ev) {
+        var req = me.create("topics");
+        req.setPayload({"topic":$('#newtopic').val()});
+        req.send();
+      });      
       $('#sendMessage').click(function(ev) {
         if (!currentTopic) {
           alert('You must select a topic before posting');
