@@ -1,5 +1,9 @@
 package org.zincapi.chirpy.server;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.codehaus.jettison.json.JSONObject;
 import org.zincapi.HandleRequest;
 import org.zincapi.MulticastResponse;
 import org.zincapi.ResourceHandler;
@@ -7,28 +11,25 @@ import org.zincapi.Response;
 import org.zincapi.Zinc;
 
 public class TopicResourceHandler implements ResourceHandler {
-	private final Zinc z;
-	private final String name;
+	private final List<JSONObject> messages = new ArrayList<JSONObject>();
+	private final MulticastResponse multi;
 
 	public TopicResourceHandler(Zinc z, String name) {
-		this.z = z;
-		this.name = name;
+		multi = z.getMulticastResponse(name);
 	}
 
 	@Override
 	public void handle(HandleRequest hr, Response response) throws Exception {
 		if (hr.isSubscribe()) {
-			System.out.println("Request for topic " + name);
-			MulticastResponse r = z.getMulticastResponse(name);
-			r.attachResponse(response);
+			multi.attachResponse(response);
+			for (JSONObject obj : messages)
+				response.send(obj);
 		} else if (hr.isCreate()) {
-			System.out.println("Publishing to topic " + name);
-			MulticastResponse r = z.getMulticastResponse(name);
-			r.send(hr.getPayload());
+			JSONObject payload = hr.getPayload();
+			messages.add(payload);
+			multi.send(payload);
 		} else
 			System.out.println("Cannot handle request " + hr);
-//		response.send(new JSONObject("{\"topic\":{\"name\":\"baseball\"}}"));
-//		response.send(new JSONObject("{\"topic\":{\"name\":\"football\"}}"));
 	}
 
 }
