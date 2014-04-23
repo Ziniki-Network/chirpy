@@ -7,16 +7,20 @@ import org.zincapi.Response;
 import org.zincapi.Zinc;
 
 public class TopicListResourceHandler implements ResourceHandler {
+	private final Repository repo;
 
-	public TopicListResourceHandler(Zinc z) {
-		// TODO Auto-generated constructor stub
+	public TopicListResourceHandler(Zinc z, Repository repo) {
+		this.repo = repo;
 	}
 
 	@Override
 	public void handle(HandleRequest hr, Response response) throws Exception {
-		System.out.println("Hello");
-		response.send(new JSONObject("{\"topic\":{\"name\":\"baseball\"}}"));
-		response.send(new JSONObject("{\"topic\":{\"name\":\"football\"}}"));
+		synchronized (repo) {
+			if (hr.isSubscribe()) {
+				for (String s : repo.topics)
+					response.send(new JSONObject("{\"topic\":{\"name\":\"" + s + "\"}}"));
+			} else
+				throw new RuntimeException("Cannot handle " + hr);
+		}
 	}
-
 }

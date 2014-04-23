@@ -13,12 +13,11 @@ require(['zinc'], function(zinc) {
       }
       function subscribeTo(topic) {
         if (currentRequest != null) {
-          console.log("unsubscribe from " + currentRequest);
+          currentRequest.unsubscribe();
         }
         $("li.message").remove();
         currentTopic = topic;
-        var currentRequest = me.subscribe("topic/" + topic, function(msg) {
-          console.log(msg.message.text);
+        currentRequest = me.subscribe("topic/" + topic, function(msg) {
           $("#messages").append("<li class='message'>"+msg.message.text+"</li>");
         });
         currentRequest.send();

@@ -25,8 +25,9 @@ public class Main {
 	}
 	
 	public static void initZinc(Zinc z) {
-		z.handleResource("topics", new TopicListResourceHandler(z));
-		z.handleResource("topic/baseball", new TopicResourceHandler(z, "baseball"));
-		z.handleResource("topic/football", new TopicResourceHandler(z, "football"));
+		Repository repo = new Repository(z);
+		z.handleResource("topics", new TopicListResourceHandler(z, repo));
+		repo.addTopic("baseball");
+		repo.addTopic("football");
 	}
 }
