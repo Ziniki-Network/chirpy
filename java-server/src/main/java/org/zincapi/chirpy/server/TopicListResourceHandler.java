@@ -1,8 +1,12 @@
 package org.zincapi.chirpy.server;
 
+import java.util.Map.Entry;
+
 import org.codehaus.jettison.json.JSONObject;
 import org.zincapi.HandleRequest;
+import org.zincapi.MakeRequest;
 import org.zincapi.MulticastResponse;
+import org.zincapi.Requestor;
 import org.zincapi.ResourceHandler;
 import org.zincapi.Response;
 import org.zincapi.Zinc;
@@ -25,6 +29,15 @@ public class TopicListResourceHandler implements ResourceHandler {
 				mc.attachResponse(response);
 			} else if (hr.isCreate()) {
 				repo.addTopic(hr.getPayload().getString("topic"));
+				String uri = hr.getConnectionURI();
+				for (Entry<String, Requestor> sRqr : repo.federatedNodes.entrySet()) {
+					if (uri == null || !uri.equals(sRqr.getKey())) {
+						System.out.println("Need to forward " + hr + " from " + uri + " to " + sRqr.getKey());
+						MakeRequest create = sRqr.getValue().create("topics", null);
+						create.setPayload(hr.getPayload());
+						create.send();
+					}
+				}
 			} else
 				throw new RuntimeException("Cannot handle " + hr);
 		}

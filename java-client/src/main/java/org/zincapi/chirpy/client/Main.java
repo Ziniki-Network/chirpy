@@ -34,6 +34,13 @@ public class Main {
 				MakeRequest cmd;
 				if (t[0].equals("topics")) {
 					cmd = requestor.subscribe("topics", listHandler);
+				} else if (t[0].equals("newtopic")) {
+					if (t.length != 2) {
+						System.out.println("newtopic <topic>");
+						continue;
+					}
+					cmd = requestor.create("topics", null);
+					cmd.setPayload(new JSONObject("{\"topic\":\""+ t[1] + "\"}"));
 				} else if (t[0].equals("topic")) {
 					if (t.length != 2) {
 						System.out.println("topic <topic>");

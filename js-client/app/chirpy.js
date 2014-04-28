@@ -1,5 +1,5 @@
 require(['zinc'], function(zinc) {
-  var promise = zinc.newRequestor("http://localhost:8380/chirpy");
+  var promise = zinc.newRequestor("/chirpy");
   console.log();
   promise.then(function(me) {
     try {
