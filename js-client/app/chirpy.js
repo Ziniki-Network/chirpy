@@ -40,7 +40,13 @@ require(['zinc'], function(zinc) {
         }
         var userName = $('#user').val();
         var req = me.create("topic/" + currentTopic);
-        req.setPayload({"message":{"text": userName + ": " + $('#entry').val()}});
+        var dt = new Date();
+        var m = dt.getMonth()+1;
+        var d = dt.getDate();
+        var h = dt.getHours();
+        var ms = dt.getMinutes();
+        var td = (m<10?"0":"")+m+"/"+(d<10?"0":"")+d+":"+(h<10?"0":"")+h+(ms<10?"0":"") +ms;
+        req.setPayload({"message":{"text": "["+td+"] "+userName + ": " + $('#entry').val()}});
         req.send();
       });
     } catch (e) { console.log(e); }
